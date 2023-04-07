@@ -11,22 +11,25 @@ interface Iuser {
 
 interface userData extends Iuser, mongoose.Document {}
 
-const userModel = new mongoose.Schema({
-  name: {
-    type: String,
+const userModel = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+    password: {
+      type: String,
+    },
+    token: {
+      type: String,
+    },
+    verified: {
+      type: Boolean,
+    },
   },
-  email: {
-    type: String,
-  },
-  password: {
-    type: String,
-  },
-  token: {
-    type: String,
-  },
-  verified: {
-    type: Boolean,
-  },
-});
+  { timestamps: true }
+);
 
 export default mongoose.model<userData>("emailServer", userModel);

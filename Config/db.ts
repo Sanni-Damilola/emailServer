@@ -1,21 +1,11 @@
 import mongoose from "mongoose";
 
-
-
-
-
-
-
-const mongodbLifeUrl = "mongodb+srv://sannidatabase:sannidatabase@cluster0.zh68ie9.mongodb.net/?retryWrites=true&w=majority"
-
-
-
+const mongodbLifeUrl =
+  "mongodb+srv://sannidatabase:sannidatabase@cluster0.zh68ie9.mongodb.net/?retryWrites=true&w=majority";
 
 const dbConfig = async () => {
   try {
-    const connectUrl = await mongoose.connect(
-      mongodbLifeUrl,
-    );
+    const connectUrl = await mongoose.connect(mongodbLifeUrl);
     console.log("Connected To DataBase");
     console.log("");
     if (mongoose.connection.host === "local host") {
