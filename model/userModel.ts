@@ -5,6 +5,7 @@ interface Iuser {
   email: string;
   password: string;
   token: string;
+  otp: string;
   verified: boolean;
 }
 
