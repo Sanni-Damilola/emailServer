@@ -24,7 +24,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const getOne = async (req: Request, res: Response) => {
   try {
-    const getUser = await userModel.findById(req.body);
+    const getUser = await userModel.findById(req.params.id);
     return res.status(200).json({
       message: "Succefully gotten User",
       data: getUser,
