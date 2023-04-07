@@ -1,10 +1,13 @@
 import { google } from "googleapis";
 import nodemailer from "nodemailer";
 
-const google_id: string = "";
-const google_secret: string = "";
-const google_refreshToken: string = "";
-const google_redirectToken: string = "";
+const google_id: string =
+  "367762056277-jtls6icdrtvdrpu29988a4p41cebi5r8.apps.googleusercontent.com";
+const google_secret: string = "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";
+const google_refreshToken: string =
+  "1//04PwVfScRD8FeCgYIARAAGAQSNwF-L9IrmpYwe2jwCygCgdRSEF-gBJVA7vcwGAdo6ht9iZiWIGkQUJ90OumMMadvZetFH1oEtz0";
+const google_redirectToken: string =
+  "https://developers.google.com/oauthplayground";
 
 const oAuth = new google.auth.OAuth2(
   google_id,
@@ -24,6 +27,7 @@ export const verifyAccount = async () => {
       service: "gmail",
       auth: {
         type: "OAuth2",
+        user: "sannifortune11@gmail.com",
         clientId: google_id,
         clientSecret: google_secret,
         refreshToken: google_refreshToken,
@@ -32,7 +36,7 @@ export const verifyAccount = async () => {
     });
 
     const mailerOptions = {
-      from: "lyfCare", // sender address
+      from: "lyfCare <sannifortune11@gmail.com>", // sender address
       to: "sendEmail", // list of receivers
       subject: "Hello ✔", // Subject line
       text: "Hello world?", // plain text body
