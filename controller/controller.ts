@@ -54,3 +54,14 @@ export const getAllUser = async (req: Request, res: Response) => {
     data: getUser,
   });
 };
+
+export const verifiyUser = async (req: Request, res: Response) => {
+  try {
+    const { otp } = req.body;
+    const { id } = req.params;
+
+    const user = await userModel.findById(id);
+  } catch (error) {
+    console.log("An Error Occured occured in", error);
+  }
+};
