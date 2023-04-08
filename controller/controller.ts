@@ -16,16 +16,17 @@ export const createUser = async (req: Request, res: Response) => {
 
     const otp = crypto.randomBytes(2).toString("hex");
     const token = crypto.randomBytes(32).toString("hex");
-    const createUser: any = await userModel.create(
-      {
-        name,
-        email,
-        password,
-        otp,
-        token,
-      },
-      { timestamps: true }
-    );
+    const createUser = await userModel.create({
+      name,
+      email,
+      password,
+      otp,
+      token,
+    });
+
+    await userModel.findByIdAndUpdate(createUser?._id, {
+      $push: { allOldPassword: createUser?.password },
+    });
     // verifyAccount(createUser)
     //   .then(() => {
     //     console.log("Mail Sent");
@@ -119,10 +120,34 @@ export const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-
 export const changeUserPassword = async (req: Request, res: Response) => {
   try {
+    const { id, token } = req.params;
+    const { password } = req.body;
+
+    const getUser = await userModel.findById(id);
+
+    if (getUser) {
+      if (getUser?.token !== "" && getUser?.verified == true) {
+        const getUserAndUpdatePassword = await userModel.findByIdAndUpdate(
+          getUser?._id,
+          {
+            password,
+            token: "",
+          },
+          { new: true }
+        );
+        return res.json({
+          message: "Your password has been changed, SUCCESSFULLY!",
+          data: getUserAndUpdatePassword,
+        });
+      } else {
+        return res.json({ message: "Couldnt't Change Password Try Again" });
+      }
+    } else {
+      return res.json({ message: "Could'nt Get User" });
+    }
   } catch (error) {
-    console.log(error);
+    console.log("An error occured in changeUserPassword", error);
   }
 };

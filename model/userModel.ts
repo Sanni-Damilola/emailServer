@@ -7,11 +7,12 @@ interface Iuser {
   token: string;
   otp: string;
   verified: boolean;
+  allOldPassword: [];
 }
 
 interface userData extends Iuser, mongoose.Document {}
 
-const userModel = new mongoose.Schema(
+const userModel = new mongoose.Schema<Iuser>(
   {
     name: {
       type: String,
@@ -32,6 +33,7 @@ const userModel = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    allOldPassword: [],
   },
   { timestamps: true }
 );
