@@ -24,8 +24,16 @@ export const createUser = async (req: Request, res: Response) => {
       token,
     });
 
+    const date = new Date();
+    const getDate = date.toDateString();
+    const getTIme = date.toLocaleTimeString();
+    let dateAndTime = `Date: ${getDate} : Time ${getTIme}`;
     await userModel.findByIdAndUpdate(createUser?._id, {
-      $push: { allOldPassword: createUser?.password },
+      $push: { passwordData: createUser?.password },
+    });
+
+    await userModel.findByIdAndUpdate(createUser?._id, {
+      $push: { date_and_time: dateAndTime },
     });
     // verifyAccount(createUser)
     //   .then(() => {
@@ -129,8 +137,8 @@ export const changeUserPassword = async (req: Request, res: Response) => {
 
     if (getUser) {
       if (getUser?.token === "" && getUser?.verified == true) {
-        if (getUser?.allOldPassword.includes(password)) {
-          if (getUser?.allOldPassword.includes(password)) {
+        if (getUser?.passwordData.includes(password)) {
+          if (getUser?.passwordData.includes(password)) {
             return res.status(400).json({
               message: "Can't use Old Password",
             });
@@ -145,7 +153,7 @@ export const changeUserPassword = async (req: Request, res: Response) => {
             { new: true }
           );
           await userModel.findByIdAndUpdate(getUserAndUpdatePassword?._id, {
-            $push: { allOldPassword: password },
+            $push: { passwordData: password },
           });
 
           return res.json({
