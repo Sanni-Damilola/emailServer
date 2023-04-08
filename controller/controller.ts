@@ -128,19 +128,31 @@ export const changeUserPassword = async (req: Request, res: Response) => {
     const getUser = await userModel.findById(id);
 
     if (getUser) {
-      if (getUser?.token !== "" && getUser?.verified == true) {
-        const getUserAndUpdatePassword = await userModel.findByIdAndUpdate(
-          getUser?._id,
-          {
-            password,
-            token: "",
-          },
-          { new: true }
-        );
-        return res.json({
-          message: "Your password has been changed, SUCCESSFULLY!",
-          data: getUserAndUpdatePassword,
-        });
+      if (getUser?.token === "" && getUser?.verified == true) {
+        if (getUser?.allOldPassword.includes(password)) {
+          if (getUser?.allOldPassword.includes(password)) {
+            return res.status(400).json({
+              message: "Can't use Old Password",
+            });
+          }
+        } else {
+          const getUserAndUpdatePassword = await userModel.findByIdAndUpdate(
+            getUser?._id,
+            {
+              password,
+              token: "",
+            },
+            { new: true }
+          );
+          await userModel.findByIdAndUpdate(getUserAndUpdatePassword?._id, {
+            $push: { allOldPassword: password },
+          });
+
+          return res.json({
+            message: "Your password has been changed, SUCCESSFULLY!",
+            data: getUserAndUpdatePassword,
+          });
+        }
       } else {
         return res.json({ message: "Couldnt't Change Password Try Again" });
       }

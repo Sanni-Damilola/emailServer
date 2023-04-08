@@ -7,7 +7,7 @@ interface Iuser {
   token: string;
   otp: string;
   verified: boolean;
-  allOldPassword: [];
+  allOldPassword: any[];
 }
 
 interface userData extends Iuser, mongoose.Document {}
