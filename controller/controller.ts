@@ -55,13 +55,41 @@ export const getAllUser = async (req: Request, res: Response) => {
   });
 };
 
+
+// verifiyUser
 export const verifiyUser = async (req: Request, res: Response) => {
   try {
     const { otp } = req.body;
     const { id } = req.params;
 
     const user = await userModel.findById(id);
+    if (user?.otp === otp) {
+      if (user?.token !== "") {
+        await userModel.findByIdAndUpdate(
+          id,
+          {
+            token: "",
+            verified: true,
+          },
+          { new: true }
+        );
+      }
+    } else {
+      return res.status(400).json({
+        mesage: "Wrong OTP",
+      });
+    }
+
+    return res.status(200).json({
+      data: user,
+    });
   } catch (error) {
     console.log("An Error Occured occured in", error);
   }
 };
+
+
+// request reset password
+export const resetPassword = () => {
+  
+}
