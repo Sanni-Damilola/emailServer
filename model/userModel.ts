@@ -25,6 +25,9 @@ const userModel = new mongoose.Schema(
     token: {
       type: String,
     },
+    otp: {
+      type: String,
+    },
     verified: {
       type: Boolean,
     },

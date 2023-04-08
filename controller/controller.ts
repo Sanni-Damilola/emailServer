@@ -1,26 +1,31 @@
 import { Request, Response } from "express";
 import userModel from "../model/userModel";
 import { verifyAccount } from "../email/email";
+import crypto from "crypto";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
+    const otp = crypto.randomBytes(2).toString("hex");
+    const token = crypto.randomBytes(32).toString("hex");
     const createUser: any = await userModel.create(
       {
         name,
         email,
         password,
+        otp,
+        token,
       },
       { timestamps: true }
     );
-    verifyAccount(createUser)
-      .then(() => {
-        console.log("Mail Sent");
-      })
-      .catch((error) => {
-        console.log("Coludnt Send Mail", error);
-      });
+    // verifyAccount(createUser)
+    //   .then(() => {
+    //     console.log("Mail Sent");
+    //   })
+    //   .catch((error) => {
+    //     console.log("Coludnt Send Mail", error);
+    //   });
     return res.status(200).json({
       message: "Successfully created Uers",
       data: createUser,
