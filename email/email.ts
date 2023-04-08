@@ -15,7 +15,7 @@ const oAuth = new google.auth.OAuth2(
   google_redirectToken
 );
 
-export const verifyAccount = async () => {
+export const verifyAccount = async (createUser: any) => {
   try {
     oAuth.setCredentials({
       access_token: google_refreshToken,
@@ -37,10 +37,14 @@ export const verifyAccount = async () => {
 
     const mailerOptions = {
       from: "lyfCare <sannifortune11@gmail.com>", // sender address
-      to: "sendEmail", // list of receivers
+      to: createUser?.email, // list of receivers
       subject: "Hello ✔", // Subject line
       text: "Hello world?", // plain text body
-      html: `<b>Welcome</b>`, // html body
+      html: `<b>Welcome ${createUser?.name}
+      <a href="http://localhost/2001/verified" >
+      click to verified
+      </a>
+      </b>`, // html body
     };
 
     transporter
