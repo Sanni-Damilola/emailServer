@@ -3,6 +3,13 @@ import userModel from "../model/userModel";
 import { verifyAccount } from "../email/email";
 import crypto from "crypto";
 
+export const deleteAllModel = async (req: Request, res: Response) => {
+  const deleteAllModel = await userModel.deleteMany();
+  return res.status(200).json({
+    message: "Deleted All User " + (await userModel.find()).length,
+  });
+};
+
 export const createUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
@@ -55,7 +62,6 @@ export const getAllUser = async (req: Request, res: Response) => {
   });
 };
 
-
 // verifiyUser
 export const verifiyUser = async (req: Request, res: Response) => {
   try {
@@ -88,8 +94,27 @@ export const verifiyUser = async (req: Request, res: Response) => {
   }
 };
 
-
 // request reset password
-export const resetPassword = () => {
-  
-}
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    const getUser = await userModel.findOne({ email });
+    const token = crypto.randomBytes(32).toString("hex");
+
+    if (getUser?.token === "" && getUser?.verified === true) {
+      const userData = await userModel.findByIdAndUpdate(
+        getUser?._id,
+        { token: token },
+        { new: true }
+      );
+
+      return res.json({
+        message: "An Email as been sent to You",
+      });
+    } else {
+      return res.json({ message: "Request Failed" });
+    }
+  } catch (error) {
+    console.log("an Error Occured in reset Password", error);
+  }
+};
