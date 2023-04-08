@@ -118,3 +118,11 @@ export const resetPassword = async (req: Request, res: Response) => {
     console.log("an Error Occured in reset Password", error);
   }
 };
+
+
+export const changeUserPassword = async (req: Request, res: Response) => {
+  try {
+  } catch (error) {
+    console.log(error);
+  }
+};
