@@ -29,12 +29,11 @@ export const createUser = async (req: Request, res: Response) => {
     const getTIme = date.toLocaleTimeString();
     let dateAndTime = `Date: ${getDate} : Time ${getTIme}`;
     await userModel.findByIdAndUpdate(createUser?._id, {
-      $push: { passwordData: createUser?.password },
+      $push: {
+        passwordData: `Password: ${createUser?.password} Time: ${dateAndTime}`,
+      },
     });
-
-    await userModel.findByIdAndUpdate(createUser?._id, {
-      $push: { date_and_time: dateAndTime },
-    });
+    // date_and_time: dateAndTime
     // verifyAccount(createUser)
     //   .then(() => {
     //     console.log("Mail Sent");
