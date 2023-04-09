@@ -77,26 +77,23 @@ export const verifiyUser = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const user = await userModel.findById(id);
-    if (user?.otp === otp) {
-      if (user?.token !== "") {
-        await userModel.findByIdAndUpdate(
-          id,
-          {
-            token: "",
-            verified: true,
-          },
-          { new: true }
-        );
-      }
+    if (user?.otp === otp && user?.token !== "") {
+      const verifiy = await userModel.findByIdAndUpdate(
+        id,
+        {
+          token: "",
+          verified: true,
+        },
+        { new: true }
+      );
+      return res.status(200).json({
+        data: verifiy,
+      });
     } else {
       return res.status(400).json({
         mesage: "Wrong OTP",
       });
     }
-
-    return res.status(200).json({
-      data: user,
-    });
   } catch (error) {
     console.log("An Error Occured occured in", error);
   }
@@ -127,59 +124,6 @@ export const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-// export const changeUserPassword = async (req: Request, res: Response) => {
-//   try {
-//     const { id, token } = req.params;
-//     const { password } = req.body;
-
-//     const getUser = await userModel.findById(id);
-//     const date = new Date();
-//     const getDate = date.toDateString();
-//     const getTIme = date.toLocaleTimeString();
-
-//     if (getUser) {
-//       if (getUser?.token === "" && getUser?.verified == true) {
-//         if (getUser?.passwordData.includes(password)) {
-//           if (getUser?.passwordData.includes(password)) {
-//             return res.status(400).json({
-//               message: "Can't use Old Password",
-//             });
-//           }
-//         } else {
-//           const getUserAndUpdatePassword = await userModel.findByIdAndUpdate(
-//             getUser?._id,
-//             {
-//               password,
-//               token: "",
-//             },
-//             { new: true }
-//           );
-//           await userModel.findByIdAndUpdate(getUserAndUpdatePassword?._id, {
-//             $push: {
-//               passwordData: `Password: ${getUserAndUpdatePassword?.password}, Date: ${getDate}, Time: ${getTIme}`,
-//             },
-//           });
-//           console.log(
-//             "Here",
-//             getUserAndUpdatePassword?.passwordData?.toString().split(",")
-//           );
-
-//           return res.json({
-//             message: "Your password has been changed, SUCCESSFULLY!",
-//             data: getUserAndUpdatePassword,
-//           });
-//         }
-//       } else {
-//         return res.json({ message: "Couldnt't Change Password Try Again" });
-//       }
-//     } else {
-//       return res.json({ message: "Could'nt Get User" });
-//     }
-//   } catch (error) {
-//     console.log("An error occured in changeUserPassword", error);
-//   }
-// };
-
 export const changeUserPassword = async (req: Request, res: Response) => {
   try {
     const { id, token } = req.params;
@@ -187,40 +131,46 @@ export const changeUserPassword = async (req: Request, res: Response) => {
 
     const getUser = await userModel.findById(id);
     const date = new Date();
+    const getDate = date.toDateString();
+    const getTIme = date.toLocaleTimeString();
 
     if (getUser) {
-      if (getUser?.passwordData.indexOf(password) !== -1) {
-        let getIndex = getUser?.passwordData.indexOf(password);
-        let getAndTime = getUser?.dateAndTIme[getIndex!];
+      if (getUser?.token !== "" && getUser?.verified == true) {
+        if (getUser?.passwordData.indexOf(password) !== -1) {
+          let getIndex = getUser?.passwordData.indexOf(password);
+          let getAndTime = getUser?.dateAndTIme[getIndex!];
 
-        return res.status(400).json({
-          message: `Can't use Old Password...This Password was set on 👉 ${getAndTime}`,
-        });
+          return res.status(400).json({
+            message: `Can't use Old Password...This Password was set on 👉 ${getAndTime}`,
+          });
+        } else {
+          const getUserAndUpdatePassword = await userModel.findByIdAndUpdate(
+            getUser?._id,
+            {
+              password,
+              token: "",
+            },
+            { new: true }
+          );
+          const date = new Date();
+          const getDate = date.toDateString();
+          const getTime = date.toLocaleTimeString();
+          await userModel.findByIdAndUpdate(getUserAndUpdatePassword?._id, {
+            $push: {
+              passwordData: password,
+              dateAndTIme: `Date: ${getDate} : Time: ${getTime}`,
+            },
+          });
+
+          console.log(getUser?.passwordData.indexOf("rrr"));
+
+          return res.json({
+            message: "Your password has been changed, SUCCESSFULLY!",
+            data: getUserAndUpdatePassword,
+          });
+        }
       } else {
-        const getUserAndUpdatePassword = await userModel.findByIdAndUpdate(
-          getUser?._id,
-          {
-            password,
-            token: "",
-          },
-          { new: true }
-        );
-        const date = new Date();
-        const getDate = date.toDateString();
-        const getTime = date.toLocaleTimeString();
-        await userModel.findByIdAndUpdate(getUserAndUpdatePassword?._id, {
-          $push: {
-            passwordData: password,
-            dateAndTIme: `Date: ${getDate} : Time: ${getTime}`,
-          },
-        });
-
-        console.log(getUser?.passwordData.indexOf("rrr"));
-
-        return res.json({
-          message: "Your password has been changed, SUCCESSFULLY!",
-          data: getUserAndUpdatePassword,
-        });
+        return res.json({ message: "Couldnt't Change Password Try Again" });
       }
     } else {
       return res.json({ message: "Could'nt Get User" });
