@@ -162,8 +162,6 @@ export const changeUserPassword = async (req: Request, res: Response) => {
             },
           });
 
-          console.log(getUser?.passwordData.indexOf("rrr"));
-
           return res.json({
             message: "Your password has been changed, SUCCESSFULLY!",
             data: getUserAndUpdatePassword,
