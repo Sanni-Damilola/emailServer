@@ -189,10 +189,9 @@ export const changeUserPassword = async (req: Request, res: Response) => {
     const date = new Date();
 
     if (getUser) {
-      if (getUser?.passwordData.indexOf(password) === 0) {
+      if (getUser?.passwordData.indexOf(password) !== -1) {
         let getIndex = getUser?.passwordData.indexOf(password);
         let getAndTime = getUser?.dateAndTIme[getIndex!];
-        console.log(getAndTime);
 
         return res.status(400).json({
           message: `Can't use Old Password...This Password was set on 👉 ${getAndTime}`,
@@ -215,6 +214,8 @@ export const changeUserPassword = async (req: Request, res: Response) => {
             dateAndTIme: `Date: ${getDate} : Time: ${getTime}`,
           },
         });
+
+        console.log(getUser?.passwordData.indexOf("rrr"));
 
         return res.json({
           message: "Your password has been changed, SUCCESSFULLY!",
