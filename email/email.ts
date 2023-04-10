@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import nodemailer from "nodemailer";
+import { resetPassword } from "../controller/controller";
 
 const google_id: string =
   "367762056277-jtls6icdrtvdrpu29988a4p41cebi5r8.apps.googleusercontent.com";
@@ -41,8 +42,8 @@ export const verifyAccount = async (createUser: any) => {
       from: "lyfCare <sannifortune11@gmail.com>", // sender address
       to: createUser?.email, // list of receivers
       subject: "Hello ✔", // Subject line
-      text: "Hello world?", // plain text body
-      html: `<b>Welcome ${createUser?.name}
+      text: "Verifiy Your Account", // plain text body
+      html: `<b>Welcome ${createUser?.name} here is your OTP : ${createUser?.otp}
       <a href="http://localhost/2001/verified" >
       click to verified
       </a>
@@ -59,5 +60,50 @@ export const verifyAccount = async (createUser: any) => {
       });
   } catch (error) {
     console.log("An Error occured In verifyAccount");
+  }
+};
+
+export const resetUserPassword = async (createUser: any) => {
+  try {
+    oAuth.setCredentials({
+      access_token: google_refreshToken,
+    });
+
+    const getToken = await oAuth.getAccessToken();
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "sannifortune11@gmail.com",
+        clientId: google_id,
+        clientSecret: google_secret,
+        refreshToken: google_refreshToken,
+        // accessToken: getToken?.token!,
+        accessToken:
+          "ya29.a0Ael9sCPEsRYe4UUAMHgFIK1lYDsSFhweaAWMRSpNK2hB5wfnJnzrEJT69X8C086gAOKqTLjotRGPu_K6PeY_7jvy-7zuadVDhVuxS8dyRTmJmNQKng_fQALGIRpiBYdyRmgL_CAQ4hnJBXviUVpffFyPPPZSassaCgYKAbsSARASFQF4udJhvaAnAIpDZ8l3JofrRxsqsA0166",
+      },
+    });
+
+    const mailerOptions = {
+      from: "lyfCare <sannifortune11@gmail.com>", // sender address
+      to: createUser?.email, // list of receivers
+      subject: "Reset your Passwod ✔", // Subject line
+      text: `Reset Password Request`, // plain text body
+      html: `<b>
+      <a heref=localhost:2001/api/changepassword/${createUser?._id}/${createUser?.token}>click here</a>
+      </b>`, // html body
+    };
+
+    transporter
+      .sendMail(mailerOptions)
+      .then(() => {
+        console.log("Reset Password Email not Sent");
+      })
+      .catch((err) => {
+        console.log("Email Not sent in resetUserPassword", err);
+      });
+  } catch (error) {
+    console.log("An Error occured In resetUserPassword");
   }
 };

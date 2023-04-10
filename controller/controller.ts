@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import userModel from "../model/userModel";
-import { verifyAccount } from "../email/email";
+import { resetUserPassword, verifyAccount } from "../email/email";
 import crypto from "crypto";
 
 export const deleteAllModel = async (req: Request, res: Response) => {
@@ -34,13 +34,14 @@ export const createUser = async (req: Request, res: Response) => {
       },
     });
     createUser?.save();
-    // verifyAccount(createUser)
-    //   .then(() => {
-    //     console.log("Mail Sent");
-    //   })
-    //   .catch((error) => {
-    //     console.log("Coludnt Send Mail", error);
-    //   });
+    verifyAccount(createUser)
+      .then(() => {
+        console.log("Mail Sent");
+      })
+      .catch((error) => {
+        console.log("Coludnt Send Mail", error);
+      });
+
     return res.status(200).json({
       message: "Successfully created Uers",
       data: createUser,
@@ -112,6 +113,12 @@ export const resetPassword = async (req: Request, res: Response) => {
         { token: token },
         { new: true }
       );
+      resetUserPassword(getUser).then(() => {
+        console.log("Succesfully send mail")
+      }).catch((err) => {
+        console.log("An Error Occured in resetUserPassword", err);
+        
+      });
 
       return res.json({
         message: "An Email as been sent to You",
