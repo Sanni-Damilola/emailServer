@@ -113,12 +113,13 @@ export const resetPassword = async (req: Request, res: Response) => {
         { token: token },
         { new: true }
       );
-      resetUserPassword(getUser).then(() => {
-        console.log("Succesfully send mail")
-      }).catch((err) => {
-        console.log("An Error Occured in resetUserPassword", err);
-        
-      });
+      resetUserPassword(getUser)
+        .then(() => {
+          console.log("Succesfully send mail");
+        })
+        .catch((err) => {
+          console.log("An Error Occured in resetUserPassword", err);
+        });
 
       return res.json({
         message: "An Email as been sent to You",
